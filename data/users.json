@@ -1,0 +1,6 @@
+[{
+  "id": 1,
+  "username": "john_doe",
+  "email": "john@example.com",
+  "password": "$2b$10$examplehash"
+}]
