@@ -10,7 +10,7 @@ const app = express();
 
 //Configuración de CORS restringida a Vite (puerto 5173 por defecto)
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: "http://localhost:5174",
   credentials: true
 }));
 

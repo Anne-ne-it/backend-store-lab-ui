@@ -1,10 +1,7 @@
 import bcrypt from "bcryptjs";
 
 import { files } from "../config/config.js";
-import {
-  readJson,
-  writeJson,
-} from "../utils/jsonDb.js";
+import { readJson, writeJson, } from "../utils/jsonDb.js";
 
 import { createToken } from "../utils/token.js";
 
@@ -42,16 +39,9 @@ export async function register(req, res) {
     }
 
     const user = {
-      id: users.length
-        ? Math.max(
-            ...users.map((item) => item.id)
-          ) + 1
-        : 1,
-
+      id: users.length ? Math.max( ...users.map((item) => item.id) ) + 1 : 1,
       email: normalizedEmail,
-
       password: await bcrypt.hash(password, 10),
-
       createdAt: new Date().toISOString(),
     };
 
