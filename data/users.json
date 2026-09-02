@@ -1,6 +1,14 @@
 [{
-  "id": 1,
+    "id": 1,
+    "username": "anne_nemo",
+    "email": "anne@example.com",
+    "password": "macarronesConTomate123",
+    "role": "admin"
+  }
+  {
+  "id": 2,
   "username": "john_doe",
   "email": "john@example.com",
   "password": "$2b$10$examplehash"
+  "role": "user"
 }]
