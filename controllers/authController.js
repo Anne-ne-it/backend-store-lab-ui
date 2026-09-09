@@ -1,117 +1,19 @@
-import bcrypt from "bcryptjs";
+import { getCurrentUser, loginUser, registerUser } from "../services/authServices.js"
 
-import { files } from "../config/config.js";
-import { readJson, writeJson, } from "../utils/jsonDb.js";
-
-import { createToken } from "../utils/token.js";
-
-export async function register(req, res) {
+export async function register(req, res, next) {
   try {
-    const { email, password } = req.body;
-
-    if (!email?.trim() || !password) {
-      return res.status(400).json({
-        message:
-          "Email y contraseña son obligatorios",
-      });
-    }
-
-    if (password.length < 6) {
-      return res.status(400).json({
-        message:
-          "La contraseña debe tener al menos 6 caracteres",
-      });
-    }
-
-    const users = await readJson(files.users);
-
-    const normalizedEmail =
-      email.trim().toLowerCase();
-
-    const userExists = users.some(
-      (user) => user.email === normalizedEmail
-    );
-
-    if (userExists) {
-      return res.status(409).json({
-        message: "El email ya está registrado",
-      });
-    }
-
-    const user = {
-      id: users.length ? Math.max( ...users.map((item) => item.id) ) + 1 : 1,
-      email: normalizedEmail,
-      password: await bcrypt.hash(password, 10),
-      createdAt: new Date().toISOString(),
-    };
-
-    users.push(user);
-
-    await writeJson(files.users, users);
-
-    const token = createToken(user);
-
-    res.status(201).json({
-      data: {
-        user: {
-          id: user.id,
-          email: user.email,
-        },
-        token,
-      },
-    });
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      message: "Error al registrar usuario",
-    });
-  }
+    res.status(201).json({ data: await registerUser(req.body) })
+  } catch (error) { next(error) }
 }
 
-export async function login(req, res) {
+export async function login(req, res, next) {
   try {
-    const { email, password } = req.body;
+    res.json({ data: await loginUser(req.body) })
+  } catch (error) { next(error) }
+}
 
-    const users = await readJson(files.users);
-
-    const normalizedEmail =
-      email?.trim().toLowerCase();
-
-    const user = users.find(
-      (item) =>
-        item.email === normalizedEmail
-    );
-
-    if (
-      !user ||
-      !(await bcrypt.compare(
-        password || "",
-        user.password
-      ))
-    ) {
-      return res.status(401).json({
-        message:
-          "Email o contraseña incorrectos",
-      });
-    }
-
-    const token = createToken(user);
-
-    res.json({
-      data: {
-        user: {
-          id: user.id,
-          email: user.email,
-        },
-        token,
-      },
-    });
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      message: "Error al iniciar sesión",
-    });
-  }
+export async function me(req, res, next) {
+  try {
+    res.json({ data: await getCurrentUser(req.user.id) })
+  } catch (error) { next(error) }
 }

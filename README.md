@@ -62,9 +62,3 @@ Registro/login devuelven:
   }
 }
 ```
-
-## Datos
-
-Para mantenerlo sencillo, los datos se guardan en JSON dentro de `data/`.
-
-Esto está bien para un proyecto junior/demo. Para producción convendría usar una base de datos como PostgreSQL o MongoDB y variables de entorno reales para el secreto JWT.

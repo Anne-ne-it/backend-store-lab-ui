@@ -1,83 +1,77 @@
-import { files } from "../config/config.js";
-import { readJson, writeJson, } from "../utils/jsonDb.js";
+import * as reviewService from "../services/reviewServices.js"
 
-export async function getReviewsByProduct(req, res) {
+export const createReview = async (req, res) => {
   try {
-    const reviews = await readJson(files.reviews);
-
-    const result = reviews.filter(
-      (review) =>
-        review.productId === Number(req.params.productId)
-    );
-
-    res.json({
-      data: result,
-    });
+    const review = await reviewService.createReview(req.body)
+    res.status(201).json({
+      ok: true,
+      data: review,
+    })
   } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      message: "Error al obtener reseñas",
-    });
+    res.status(400).json({
+      ok: false,
+      error: error.message,
+    })
   }
 }
 
-export async function createReview(req, res) {
+export const getReviewsByProduct = async (req, res) => {
   try {
-    const {
-      productId,
-      rating,
-      comment,
-    } = req.body;
-
-    if (!productId || !rating || !comment?.trim()) {
-      return res.status(400).json({
-        message: "productId, rating y comment son obligatorios",
-      });
-    }
-
-    if (rating < 1 || rating > 5) {
-      return res.status(400).json({
-        message: "La valoración debe estar entre 1 y 5",
-      });
-    }
-
-    const products = await readJson(files.products);
-
-    const productExists = products.some(
-      (product) => product.id === Number(productId)
-    );
-
-    if (!productExists) {
-      return res.status(404).json({
-        message: "Producto no encontrado",
-      });
-    }
-
-    const reviews = await readJson(files.reviews);
-
-    const review = {
-      id: reviews.length ? Math.max(...reviews.map((item) => item.id)) + 1 : 1,
-      productId: Number(productId),
-      userId: req.user.id,
-      userEmail: req.user.email,
-      rating: Number(rating),
-      comment: comment.trim(),
-      createdAt: new Date().toISOString(),
-    };
-
-    reviews.push(review);
-
-    await writeJson(files.reviews, reviews);
-
-    res.status(201).json({
-      data: review,
-    });
+    const reviews = await reviewService.getReviewsByProduct(req.params.productId)
+    res.json({
+      ok: true,
+      data: reviews,
+    })
   } catch (error) {
-    console.error(error);
-
     res.status(500).json({
-      message: "Error al crear la reseña",
-    });
+      ok: false,
+      error: error.message,
+    })
+  }
+}
+
+export const updateReview = async (req, res) => {
+  try {
+    const review = await reviewService.updateReview(req.params.id, req.body)
+
+    if (!review) {
+      return res.status(404).json({
+        ok: false,
+        error: "Review no encontrada",
+      })
+    }
+
+    res.json({
+      ok: true,
+      data: review,
+    })
+  } catch (error) {
+    res.status(400).json({
+      ok: false,
+      error: error.message,
+    })
+  }
+}
+
+export const deleteReview = async (req, res) => {
+  try {
+    const review = await reviewService.deleteReview(req.params.id)
+
+    if (!review) {
+      return res.status(404).json({
+        ok: false,
+        error: "Review no encontrada",
+      })
+    }
+
+    res.json({
+      ok: true,
+      message: "Review eliminada",
+    })
+  } catch (error) {
+    res.status(500).json({
+      ok: false,
+      error: error.message,
+    })
   }
 }

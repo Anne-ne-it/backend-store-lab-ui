@@ -1,13 +1,14 @@
-import { files } from "../config/config.js";
-import { readJson } from "../utils/jsonDb.js";
+import { supabase } from "../data/supabaseClient.js";
 
 export async function getMe(req, res) {
   try {
-    const users = await readJson(files.users);
+    const { data: user, error } = await supabase
+      .from("users")
+      .select("id, email, username, role, created_at")
+      .eq("id", req.user.id)
+      .maybeSingle();
 
-    const user = users.find(
-      (item) => item.id === req.user.id
-    );
+    if (error) throw error;
 
     if (!user) {
       return res.status(404).json({
@@ -19,7 +20,9 @@ export async function getMe(req, res) {
       data: {
         id: user.id,
         email: user.email,
-        createdAt: user.createdAt,
+        username: user.username,
+        role: user.role,
+        createdAt: user.created_at,
       },
     });
   } catch (error) {

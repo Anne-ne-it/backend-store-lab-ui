@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  username  String?
+  password  String
+  role      String   @default("USER")
+  createdAt DateTime @default(now()) @map("created_at")
+  reviews   Review[]
+
+  @@map("users")
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  category    String
+  price       Float
+  description String
+  image       String
+  stock       Int      @default(0)
+  createdAt   DateTime @default(now()) @map("created_at")
+  reviews     Review[]
+
+  @@map("products")
+}
