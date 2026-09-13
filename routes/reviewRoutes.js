@@ -1,8 +1,11 @@
 import { Router } from "express"
-import { createReview, getReviewsByProduct } from "../controllers/reviewController.js"
+import { createReview, getReviewsByProduct, updateReview, deleteReview } from "../controllers/reviewController.js"
 import { authMiddleware } from "../middleware/authMiddleware.js"
 
 const router = Router()
 router.get("/product/:productId", getReviewsByProduct)
-router.post("/", authMiddleware, createReviewHandler)
+router.post("/", authMiddleware, createReview)
+router.put("/:id", authMiddleware, updateReview)
+router.delete("/:id", authMiddleware, deleteReview)
+
 export default router

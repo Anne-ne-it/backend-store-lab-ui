@@ -13,7 +13,6 @@ model User {
   password  String
   role      String   @default("USER")
   createdAt DateTime @default(now()) @map("created_at")
-  reviews   Review[]
 
   @@map("users")
 }
@@ -27,7 +26,6 @@ model Product {
   image       String
   stock       Int      @default(0)
   createdAt   DateTime @default(now()) @map("created_at")
-  reviews     Review[]
 
   @@map("products")
 }

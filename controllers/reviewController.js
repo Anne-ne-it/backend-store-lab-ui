@@ -2,7 +2,17 @@ import * as reviewService from "../services/reviewServices.js"
 
 export const createReview = async (req, res) => {
   try {
-    const review = await reviewService.createReview(req.body)
+    const { productId, rating, comment } = req.body
+    const userId = req.user.id
+    const reviewData = {
+      productId,
+      rating,
+      comment,
+      userId,
+    }
+
+    const review = await reviewService.createReview(reviewData)
+
     res.status(201).json({
       ok: true,
       data: review,
