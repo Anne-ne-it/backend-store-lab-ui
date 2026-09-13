@@ -9,7 +9,7 @@ import {
 } from "../controllers/productController.js"
 import { adminMiddleware } from "../middleware/adminMiddleware.js"
 import { authMiddleware } from "../middleware/authMiddleware.js"
-import { validateProduct } from "../middleware/validateProducts.js"
+import { validateProduct, validateProductUpdate } from "../middleware/validateProducts.js"
 import { upload } from "../config/multer.js"
 
 const router = Router()
@@ -39,7 +39,7 @@ router.put(
   authMiddleware,
   adminMiddleware,
   upload.single("image"),
-  validateProduct,
+  validateProductUpdate,
   updateProductHandler
 )
 

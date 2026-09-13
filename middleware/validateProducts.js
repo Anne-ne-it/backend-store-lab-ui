@@ -1,35 +1,48 @@
 import { body, validationResult } from "express-validator"
 
-export const validateProduct = [
-  // 1. Validar name (reemplaza a title): no puede estar vacío
+const validateProductFields = (required = true) => [
   body("name")
+    .optional({ values: "falsy" })
     .trim()
+    .if(() => required)
     .notEmpty()
     .withMessage("El nombre del producto es obligatorio"),
 
-  // 2. Validar category: no puede estar vacía
   body("category")
+    .optional({ values: "falsy" })
     .trim()
+    .if(() => required)
     .notEmpty()
     .withMessage("La categoría es obligatoria"),
 
-  // 3. Validar description: no puede estar vacía
   body("description")
+    .optional({ values: "falsy" })
     .trim()
+    .if(() => required)
     .notEmpty()
     .withMessage("La descripción es obligatoria"),
 
-  // 4. Validar price: debe ser un número y no puede ser negativo
   body("price")
+    .optional({ values: "falsy" })
+    .if(() => required)
     .isFloat({ min: 0 })
     .withMessage("El precio debe ser un número válido mayor o igual a 0"),
 
-  // 5. Validar stock: debe ser un número entero y no puede ser negativo
   body("stock")
+    .optional({ values: "falsy" })
+    .if(() => required)
     .isInt({ min: 0 })
     .withMessage("El stock debe ser un número entero mayor o igual a 0"),
 
-  // Middleware encargado de revisar si hubo errores en las validaciones anteriores
+  body("image")
+    .optional({ values: "falsy" })
+    .custom((value) => {
+      if (!value) return true
+      if (typeof value === "string" && value.startsWith("http")) return true
+      return false
+    })
+    .withMessage("La imagen debe ser una URL válida"),
+
   (req, res, next) => {
     const errors = validationResult(req)
 
@@ -43,3 +56,6 @@ export const validateProduct = [
     next()
   },
 ]
+
+export const validateProduct = validateProductFields(true)
+export const validateProductUpdate = validateProductFields(false)
