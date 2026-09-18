@@ -3,6 +3,11 @@ import app from "./app.js"
 import { PORT } from "./config/config.js"
 import { dbConnection } from "./db/configMongo.js"
 
+console.log("PORT recibido por Render:", process.env.PORT )
+console.log("JWT_SECRET configurado:", Boolean(process.env.JWT_SECRET))
+console.log("DATABASE_URL configurada:", Boolean(process.env.DATABASE_URL))
+console.log("MONGODB_URI configurada:", Boolean(process.env.MONGODB_URI))
+
 const server = app.listen(PORT, "0.0.0.0", () => {
   console.log(`StoreLab API escuchando en el puerto ${PORT}`)
 })
