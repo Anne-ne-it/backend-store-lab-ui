@@ -1,4 +1,4 @@
-import { Wishlist } from "../models/Wishlist.js"
+import { Wishlist } from "../models/wishlist.js"
 
 export const addToWishlist = async (userId, productId) => {
   const wishlist = new Wishlist({ userId, productId })
