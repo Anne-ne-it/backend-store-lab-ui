@@ -1,11 +1,16 @@
 import "dotenv/config"
 import mongoose from "mongoose"
 
+
 export const dbConnection = async () => {
-  try {
-    await mongoose.connect(process.env.MONGODB_URI)
-    console.log("Base de datos conectada correctamente")
-  } catch (error) {
-    console.error("Error al conectar", error)
+  const mongoUri = process.env.MONGODB_URI
+
+  if (!mongoUri) {
+    throw new Error("MONGODB_URI no está configurada")
   }
+  await mongoose.connect(mongoUri, {
+    serverSelectionTimeoutMS: 10000,
+  })
+
+  console.log("Base de datos MongoDB conectada correctamente")
 }
